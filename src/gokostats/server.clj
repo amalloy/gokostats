@@ -84,7 +84,7 @@
                     (salvager-link "/leaderboard" "Leaderboard")
                     (link-to "http://rspeer.github.io/dominiate/play.html" "Dominiate Simulator")
                     (link-to "https://github.com/aiannacc/Goko-Salvager/wiki" "Goko Salvager Extension")
-                    (link-to "https://gokostats.malloys.org/" "Statistics")))])
+                    (link-to "http://gokostats.malloys.org/" "Statistics")))])
 
 (defn render-winrates [player-name ratings ignore-short-games?]
   (let [form (input-form {:player player-name
