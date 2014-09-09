@@ -5,6 +5,7 @@
             [hiccup.page :refer [html5 include-css]]
             [hiccup.form :as form :refer [form-to]]
             [hiccup.util :refer [escape-html] :rename {escape-html escape}]
+            [hiccup.element :refer [link-to]]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.util.response :as ring]
             [ring.middleware.params :refer [wrap-params]]
@@ -67,10 +68,23 @@
              (checkbox (name rating)))
            (checkbox "short-games" "Very short games")])])))
 
+(defn salvager-link [path title]
+  (link-to (str "http://www.gokosalvager.com" path) title))
+
 (defn header [title]
   [:head
    [:title title]
    (include-css "/static/style.css")])
+
+(def nav-bar
+  [:div
+   (interpose " | "
+              (list (salvager-link "/logsearch" "Log Search")
+                    (salvager-link "/kingdomvisualize" "Kingdom Visualizer")
+                    (salvager-link "/leaderboard" "Leaderboard")
+                    (link-to "http://rspeer.github.io/dominiate/play.html" "Dominiate Simulator")
+                    (link-to "https://github.com/aiannacc/Goko-Salvager/wiki" "Goko Salvager Extension")
+                    (link-to "https://gokostats.malloys.org/" "Statistics")))])
 
 (defn render-winrates [player-name ratings ignore-short-games?]
   (let [form (input-form {:player player-name
@@ -84,6 +98,7 @@
       {:status 200 :headers {"content-type" "text/html; charset=utf-8"}
        :body (html5 (header "Gokostats - Win Rate")
                     [:body
+                     nav-bar
                      form
                      [:h2 "Win rates for " (escape player-name)]
                      [:div#stats
@@ -97,6 +112,7 @@
       {:status 404 :headers {"content-type" "text/html; charset=utf-8"}
        :body (html5 (header "Gokostats - Not found")
                     [:body
+                     nav-bar
                      [:h2 "Player " (escape player-name) " hasn't played 4+ games against anyone"]
                      form])})))
 
@@ -104,6 +120,7 @@
   {:status 200 :headers {"content-type" "text/html; charset=utf-8"}
    :body (html5 (header "Gokostats")
                 [:body
+                 nav-bar
                  [:h2 "Look up a player's stats"]
                  (input-form)])})
 
@@ -118,7 +135,7 @@
                 form-page)
               (route/resources "/")
               (route/not-found (html5 (header "Not found")
-                                      [:body "No such page"])))
+                                      [:body nav-bar "No such page"])))
       (wrap-keyword-params)
       (wrap-params)
       (wrap-stacktrace)))
