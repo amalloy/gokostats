@@ -11,7 +11,6 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [clojure.string :as s]
-            [flatland.useful.debug :refer :all]
             [clojure.java.jdbc :as jdbc]))
 
 (def db {:subprotocol "postgresql"
@@ -75,9 +74,9 @@
 
 (defn render-winrates [player-name ratings ignore-short-games?]
   (let [form (input-form {:player player-name
-                          :checked-boxes (? (into (set ratings)
-                                                (when-not ignore-short-games?
-                                                  ["short-games"])))})]
+                          :checked-boxes (into (set ratings)
+                                               (when-not ignore-short-games?
+                                                 ["short-games"]))})]
     (if-let [results (seq
                       (jdbc/query db (list* (winrate-query {:ignore-short-games ignore-short-games?
                                                             :ratings ratings})
